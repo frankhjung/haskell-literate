@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"haskell.languageServer": "hls",
+		"[haskell]": {
+			"editor.defaultFormatter": "haskell.haskell",
+			"editor.formatOnSave": true
+		},
+		"haskell.format.provider": "stylish-haskell",
+		"haskell.completion.enable": true,
+		"haskell.hover.enable": true,
+		"haskell.linting.hlint.enable": true
+	}
+}
