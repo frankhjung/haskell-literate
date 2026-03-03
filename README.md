@@ -1,40 +1,87 @@
 # Literate Haskell Examples
 
-A collection literate Haskell programs that can be rendered into HTML or PDF
-documents.
+A collection of Literate Haskell programs that can be compiled and rendered to
+HTML or PDF documents.
 
-## Build
+## Quick Start
 
-To build the executable, run:
+```bash
+code literate.code-workspace
+make html pdf
+xdg-open public/bird.html
+```
+
+## Workspace
+
+Open the project with the provided VS Code workspace:
+
+```bash
+code literate.code-workspace
+```
+
+The workspace enables Haskell Language Server (`hls`) and configures formatting
+and linting for Haskell files.
+
+## Build Executables
+
+To build executables from all files in `doc/*.lhs`, run:
 
 ```bash
 make all
 ```
 
-## Literate Haskell
+This creates binaries in `doc/` (for example `doc/bird` and
+`doc/helloworld`).
 
-To render [bird.lhs](doc/bird.lhs) into a PDF, use:
+## Render Documents
 
-```bash
-pandoc -r markdown+lhs -s bird.lhs --css haskell.css -o bird.pdf
-```
-
-Or
+Build all HTML and PDF outputs:
 
 ```bash
-make doc/bird.pdf
+make html pdf
 ```
 
-To render to HTML use:
+Generated artefacts are written to `public/`:
+
+- `public/bird.html`
+- `public/bird.pdf`
+- `public/helloworld.html`
+- `public/helloworld.pdf`
+
+Build a single target:
 
 ```bash
-make doc/bird.html
+make public/bird.html
+make public/bird.pdf
+make public/helloworld.pdf
 ```
 
-## Pre-requisites
+Manual `pandoc` example for `doc/bird.lhs` (matching current Makefile flags):
 
-To build these program and documents you will need:
+```bash
+pandoc -f markdown+lhs -s -t html --css haskell.css doc/bird.lhs -o public/bird.html
+```
 
-* [GNU Make](https://www.gnu.org/software/make/)
-* [Haskell GHC compiler](https://www.haskell.org/ghc/)
-* [Pandoc](https://pandoc.org/)
+## Clean
+
+```bash
+make clean
+make cleanall
+```
+
+`clean` removes intermediate build files.
+`cleanall` removes all generated artefacts, including `public/`.
+
+## Prerequisites
+
+To build programs and documents you need:
+
+- [GNU Make](https://www.gnu.org/software/make/)
+- [GHC (Glasgow Haskell Compiler)](https://www.haskell.org/ghc/)
+- [Pandoc](https://pandoc.org/)
+- [Haskell Language Server](https://haskell-language-server.readthedocs.io/) (recommended for VS Code workspace features)
+
+## Project Layout
+
+- `doc/` contains source `.lhs` files.
+- `public/` contains generated HTML/PDF artefacts.

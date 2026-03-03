@@ -1,4 +1,3 @@
-#!/usr/bin/env make
 # Build for Literate Haskell projects.
 
 .PHONY: all html pdf clean cleanall
@@ -7,23 +6,25 @@
 
 # Find all Literate Haskell source files in the 'doc' directory.
 LHS := $(wildcard doc/*.lhs)
+PUBLIC_DIR := public
+NAMES := $(basename $(notdir $(LHS)))
 
 # Define target files based on the source files.
 EXECUTABLES := $(basename $(LHS))
-HTMLS := $(LHS:.lhs=.html)
-PDFS := $(LHS:.lhs=.pdf)
+HTMLS := $(addprefix $(PUBLIC_DIR)/,$(addsuffix .html,$(NAMES)))
+PDFS := $(addprefix $(PUBLIC_DIR)/,$(addsuffix .pdf,$(NAMES)))
 
 # --- Tool Flags ---
 
 # Flags for the Glasgow Haskell Compiler (GHC).
 # Easily add more packages to GHC_PKGS.
-GHC_PKGS := stm mtl
-GHCFLAGS := $(foreach pkg,$(GHC_PKGS),-package $(pkg)) --make
+GHC_PKGS ?=
+GHCFLAGS := --make $(foreach pkg,$(GHC_PKGS),-package $(pkg))
 
 # Common flags for Pandoc.
-PANDOC_FLAGS := -r markdown+lhs -s
+PANDOC_FLAGS := -f markdown+lhs -s
 # Specific flags for HTML output.
-PANDOC_HTML_FLAGS := -w html --css haskell.css
+PANDOC_HTML_FLAGS := -t html --css haskell.css
 
 # --- Main Build Targets ---
 
@@ -44,17 +45,21 @@ $(EXECUTABLES): %: %.lhs
 	ghc $(GHCFLAGS) $< -o $@
 
 # Rule to build an HTML file from a .lhs file.
-%.html: %.lhs
+$(PUBLIC_DIR)/%.html: doc/%.lhs haskell.css | $(PUBLIC_DIR)
 	pandoc $(PANDOC_FLAGS) $(PANDOC_HTML_FLAGS) $< -o $@
 
 # Rule to build a PDF file from a .lhs file.
 # Note: --css has been removed as it's not used by the default PDF engine (LaTeX).
-%.pdf: %.lhs
+
+$(PUBLIC_DIR)/%.pdf: doc/%.lhs | $(PUBLIC_DIR)
 	pandoc $(PANDOC_FLAGS) $< -o $@
 
 # Special rule for doc/helloworld.lhs, which is a LaTeX document.
-doc/helloworld.pdf: doc/helloworld.lhs
-	pandoc -r latex+lhs -s $< -o $@
+$(PUBLIC_DIR)/helloworld.pdf: doc/helloworld.lhs | $(PUBLIC_DIR)
+	pandoc --quiet -f latex+lhs -s $< -o $@
+
+$(PUBLIC_DIR):
+	mkdir -p $@
 
 # --- Cleaning Targets ---
 
@@ -63,13 +68,16 @@ clean:
 	@echo "Cleaning intermediate files..."
 	-$(RM) $(LHS:.lhs=.hi) $(LHS:.lhs=.o) $(LHS:.lhs=.prof)
 	-$(RM) *.aux *.fls *.log
+	-$(RM) $(PUBLIC_DIR)/*.aux $(PUBLIC_DIR)/*.fls $(PUBLIC_DIR)/*.log
 
 # Remove all generated files, including executables, HTML, and PDFs.
 cleanall: clean
 	@echo "Cleaning all generated files..."
 	-$(RM) $(EXECUTABLES) $(HTMLS) $(PDFS)
+	-$(RM) -r $(PUBLIC_DIR)
 
 # --- Configuration ---
 
 # Disable built-in suffix rules to prevent unexpected behavior and improve performance.
+.DELETE_ON_ERROR:
 .SUFFIXES:
