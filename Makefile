@@ -10,7 +10,7 @@ PUBLIC_DIR := public
 NAMES := $(basename $(notdir $(LHS)))
 
 # Define target files based on the source files.
-EXECUTABLES := $(basename $(LHS))
+EXECUTABLES := $(addprefix $(PUBLIC_DIR)/,$(NAMES))
 HTMLS := $(addprefix $(PUBLIC_DIR)/,$(addsuffix .html,$(NAMES)))
 PDFS := $(addprefix $(PUBLIC_DIR)/,$(addsuffix .pdf,$(NAMES)))
 
@@ -41,7 +41,7 @@ pdf: $(PDFS)
 
 # Rule to build an executable from a .lhs file.
 # The static pattern rule ensures this only applies to our defined EXECUTABLES.
-$(EXECUTABLES): %: %.lhs
+$(EXECUTABLES): $(PUBLIC_DIR)/%: doc/%.lhs | $(PUBLIC_DIR)
 	ghc $(GHCFLAGS) $< -o $@
 
 # Rule to build an HTML file from a .lhs file.
