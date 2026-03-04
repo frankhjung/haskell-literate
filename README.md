@@ -11,6 +11,16 @@ make html pdf
 xdg-open public/bird.html
 ```
 
+## Prerequisites
+
+To build programs and documents you need:
+
+- [GNU Make](https://www.gnu.org/software/make/)
+- [GHC (Glasgow Haskell Compiler)](https://www.haskell.org/ghc/)
+- [Pandoc](https://pandoc.org/)
+- [Haskell Language Server](https://haskell-language-server.readthedocs.io/)
+  (recommended for VS Code workspace features)
+
 ## Workspace
 
 Open the project with the provided VS Code workspace:
@@ -22,6 +32,11 @@ code literate.code-workspace
 The workspace enables Haskell Language Server (`hls`) and configures formatting
 and linting for Haskell files.
 
+## Project Layout
+
+- `doc/` contains source `.lhs` files.
+- `public/` contains generated HTML/PDF artefacts.
+
 ## Build Executables
 
 To build executables from all files in `doc/*.lhs`, run:
@@ -30,8 +45,8 @@ To build executables from all files in `doc/*.lhs`, run:
 make all
 ```
 
-This creates binaries in `doc/` (for example `doc/bird` and
-`doc/helloworld`).
+This creates binaries in `public/` (for example `public/bird` and
+`public/helloworld`).
 
 ## Render Documents
 
@@ -69,19 +84,5 @@ make clean
 make cleanall
 ```
 
-`clean` removes intermediate build files.
-`cleanall` removes all generated artefacts, including `public/`.
-
-## Prerequisites
-
-To build programs and documents you need:
-
-- [GNU Make](https://www.gnu.org/software/make/)
-- [GHC (Glasgow Haskell Compiler)](https://www.haskell.org/ghc/)
-- [Pandoc](https://pandoc.org/)
-- [Haskell Language Server](https://haskell-language-server.readthedocs.io/) (recommended for VS Code workspace features)
-
-## Project Layout
-
-- `doc/` contains source `.lhs` files.
-- `public/` contains generated HTML/PDF artefacts.
+`clean` removes intermediate build files. `cleanall` removes all generated
+artefacts, including `public/`.
